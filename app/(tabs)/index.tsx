@@ -1,74 +1,108 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from "react";
+import { SafeAreaView, StyleSheet, Text, View, FlatList, TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const activities = [
+  { id: "1", name: "Pompes", duration: "30 sec", icon: "fitness-outline" },
+  { id: "2", name: "Squats", duration: "45 sec", icon: "barbell-outline" },
+  { id: "3", name: "Burpees", duration: "40 sec", icon: "flame-outline" },
+  { id: "4", name: "Jumping Jacks", duration: "60 sec", icon: "walk-outline" },
+  { id: "5", name: "Gainage", duration: "1 min", icon: "body-outline" },
+];
 
-export default function HomeScreen() {
+const HomeScreen: React.FC = () => {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
-}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>💪 Entraînement du jour</Text>
+        <Text style={styles.subtitle}>Choisissez une activité et commencez !</Text>
+      </View>
 
+      <FlatList
+        data={activities}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer} // Ajout de padding pour éviter l'effet collé
+        renderItem={({ item }) => (
+          <Link href={{ pathname: "/activity", params: { name: item.name, duration: item.duration } }} asChild>
+            <TouchableOpacity style={styles.card}>
+              <View style={styles.iconContainer}>
+                <Ionicons name={item.icon} size={30} color="#FF9500" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardTitle}>{item.name}</Text>
+                <Text style={styles.cardDuration}>{item.duration}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={24} color="#A1A1A1" />
+            </TouchableOpacity>
+          </Link>
+        )}
+      />
+    </SafeAreaView>
+  );
+};
+
+// ✅ **Styles pro et inspirés d'iOS**
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#1C1C1E",
+    paddingHorizontal: 20,
+    paddingTop: 50,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  header: {
+    alignItems: "center",
+    marginBottom: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "#FFF",
+    textAlign: "center", // ✅ Centre le titre
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: "#A1A1A1",
+    textAlign: "center", // ✅ Centre le sous-titre
+  },
+  listContainer: {
+    paddingBottom: 20, // ✅ Ajoute de l’espace en bas pour éviter un effet coupé
+    paddingHorizontal: 20,
+  },
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#2C2C2E",
+    borderRadius: 12,
+    padding: 20, // ✅ Plus d'espace dans les cards
+    marginBottom: 15, // ✅ Plus d'espace entre chaque card
+    width: "100%",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowOffset: { width: 0, height: 3 },
+    shadowRadius: 5,
+  },
+  iconContainer: {
+    backgroundColor: "#3A3A3C",
+    padding: 12,
+    borderRadius: 10,
+    marginRight: 15,
+  },
+  cardContent: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 20, // ✅ Légèrement plus grand
+    fontWeight: "bold",
+    color: "#FFF",
+  },
+  cardDuration: {
+    fontSize: 16,
+    color: "#FF9500",
+    marginTop: 3,
   },
 });
+
+export default HomeScreen;
